@@ -1,0 +1,6 @@
+EntryTask-Interface目录结构：
+1.TaskProject文件夹为mock server.
+2.testcaseAndReport文件夹为测试用例和测试报告
+3.stressTest文件夹为压测报告及相关截图
+4.httprunner.pages为httprunner的代码走读
+5.httprunner-flow-chart.eddx为httprunner的源码流程图,可以用亿图打开

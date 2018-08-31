@@ -1,0 +1,332 @@
+[{
+		"config": {
+			"name": "testset description",
+			"variables": [],
+			"request": {
+				"base_url": "",
+				"headers": {
+					"User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3440.106 Safari/537.36"
+				}
+			}
+		}
+	},
+	{
+		"test": {
+			"name": "/shopee/test",
+			"request": {
+				"params": {
+					"a": "1",
+					"b": "aaa"
+				},
+				"url": "http://localhost:5000/shopee/test",
+				"method": "GET"
+			},
+			"validate": [{
+					"eq": [
+						"headers.Content-Type",
+						"application/json"
+					]
+				},
+				{
+					"eq": [
+						"content.error_code",
+						0
+					]
+				},
+				{
+					"eq": [
+						"content.error_message",
+						"success"
+					]
+				}
+			]
+		}
+	},
+	{
+		"test": {
+			"name": "/shopee/test",
+			"request": {
+				"params": {
+					"a": "1",
+					"b": "aaa"
+				},
+				"url": "http://localhost:5000/shopee/te",
+				"method": "GET"
+			},
+			"validate": [{
+					"eq": [
+						"headers.Content-Type",
+						"application/json"
+					]
+				},
+				{
+					"eq": [
+						"content.error_code",
+						11
+					]
+				},
+				{
+					"eq": [
+						"content.error_message",
+						"system error"
+					]
+				}
+			]
+		}
+	},
+	{
+		"test": {
+			"name": "/shopee/test",
+			"request": {
+				"params": {
+					"a": "aaa",
+					"b": "aaa"
+				},
+				"url": "http://localhost:5000/shopee/test",
+				"method": "GET"
+			},
+			"validate": [{
+					"eq": [
+						"headers.Content-Type",
+						"application/json"
+					]
+				},
+				{
+					"eq": [
+						"content.error_code",
+						21
+					]
+				},
+				{
+					"eq": [
+						"content.error_message",
+						"empty or wrong params"
+					]
+				}
+			]
+		}
+	},
+	{
+		"test": {
+			"name": "/shopee/test",
+			"request": {
+				"params": {
+					"a": 2,
+					"b": 6
+				},
+				"url": "http://localhost:5000/shopee/test",
+				"method": "GET"
+			},
+			"validate": [{
+					"eq": [
+						"headers.Content-Type",
+						"application/json"
+					]
+				},
+				{
+					"eq": [
+						"content.error_code",
+						21
+					]
+				},
+				{
+					"eq": [
+						"content.error_message",
+						"empty or wrong params"
+					]
+				}
+			]
+		}
+	},
+	{
+		"test": {
+			"name": "/shopee/test",
+			"request": {
+				"params": {
+					"a": "aaa",
+					"b": 1
+				},
+				"url": "http://localhost:5000/shopee/test",
+				"method": "GET"
+			},
+			"validate": [{
+					"eq": [
+						"headers.Content-Type",
+						"application/json"
+					]
+				},
+				{
+					"eq": [
+						"content.error_code",
+						21
+					]
+				},
+				{
+					"eq": [
+						"content.error_message",
+						"empty or wrong params"
+					]
+				}
+			]
+		}
+	},
+	{
+		"test": {
+			"name": "/shopee/test",
+			"request": {
+				"params": {
+					"a": "NULL",
+					"b": "aaa"
+				},
+				"url": "http://localhost:5000/shopee/test",
+				"method": "GET"
+			},
+			"validate": [{
+					"eq": [
+						"headers.Content-Type",
+						"application/json"
+					]
+				},
+				{
+					"eq": [
+						"content.error_code",
+						21
+					]
+				},
+				{
+					"eq": [
+						"content.error_message",
+						"empty or wrong params"
+					]
+				}
+			]
+		}
+	},
+	{
+		"test": {
+			"name": "/shopee/test",
+			"request": {
+				"params": {
+					"a": 1
+				},
+				"url": "http://localhost:5000/shopee/test",
+				"method": "GET"
+			},
+			"validate": [{
+					"eq": [
+						"headers.Content-Type",
+						"application/json"
+					]
+				},
+				{
+					"eq": [
+						"content.error_code",
+						21
+					]
+				},
+				{
+					"eq": [
+						"content.error_message",
+						"empty or wrong params"
+					]
+				}
+			]
+		}
+	},
+	{
+		"test": {
+			"name": "/shopee/test",
+			"request": {
+				"params": {
+					"a": "NULL",
+					"b": "NULL"
+				},
+				"url": "http://localhost:5000/shopee/test",
+				"method": "GET"
+			},
+			"validate": [{
+					"eq": [
+						"headers.Content-Type",
+						"application/json"
+					]
+				},
+				{
+					"eq": [
+						"content.error_code",
+						21
+					]
+				},
+				{
+					"eq": [
+						"content.error_message",
+						"empty or wrong params"
+					]
+				}
+			]
+		}
+	},
+	{
+		"test": {
+			"name": "/shopee/test",
+			"request": {
+				"params": {
+					"a": "1",
+					"b": "aaa",
+					"c": "bbb"
+				},
+				"url": "http://localhost:5000/shopee/test",
+				"method": "GET"
+			},
+			"validate": [{
+					"eq": [
+						"headers.Content-Type",
+						"application/json"
+					]
+				},
+				{
+					"eq": [
+						"content.error_code",
+						11
+					]
+				},
+				{
+					"eq": [
+						"content.error_message",
+						"system error"
+					]
+				}
+			]
+		}
+	},
+	{
+		"test": {
+			"name": "/shopee/test",
+			"request": {
+				"params": {
+					"c": "bbb"
+				},
+				"url": "http://localhost:5000/shopee/test",
+				"method": "GET"
+			},
+			"validate": [{
+					"eq": [
+						"headers.Content-Type",
+						"application/json"
+					]
+				},
+				{
+					"eq": [
+						"content.error_code",
+						21
+					]
+				},
+				{
+					"eq": [
+						"content.error_message",
+						"empty or wrong params"
+					]
+				}
+			]
+		}
+	}
+]

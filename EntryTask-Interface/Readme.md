@@ -1,5 +1,5 @@
 EntryTask-Interface目录结构：
-1.TaskProject文件夹为mock server.
+1.TaskProject_1文件夹为mock server的第一种方式，没有进行模块化.TaskProject_2文件夹未mock server的第二种方式，使用了蓝图进行模块化。
 2.testcaseAndReport文件夹为测试用例和测试报告
 3.stressTest文件夹为压测报告及相关截图
 4.httprunner.pages为httprunner的代码走读

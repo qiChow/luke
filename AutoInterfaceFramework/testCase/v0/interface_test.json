@@ -1,26 +1,26 @@
 [
   {
     "config": {
-      "name": "testset description",
+      "name": "${get_nameValue()}",
       "variables": [],
       "request": {
         "base_url": "",
         "headers": {
-          "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3440.106 Safari/537.36"
+          "User-Agent": "${get_userAgentValue()}"
         }
       }
     }
   },
   {
     "test": {
-      "name": "testcase01",
+      "name": "${get_testNameValue()}",
       "request": {
         "params": {
-          "a": 1,
-          "b": "nihao"
+          "a": "${get_testAValue()}",
+          "b": "${get_testBValue()}"
         },
-        "url": "http://localhost:5000/shopee/test",
-        "method": "GET"
+        "url": "${get_testUrlValue()}",
+        "method": "${get_testMethodValue()}"
       },
       "validate": [
         {

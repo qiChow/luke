@@ -1,0 +1,49 @@
+[
+    {
+        "config": {
+            "name": "testset description",
+            "variables": [],
+            "request": {
+                "base_url": "",
+                "headers": {
+                    "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3440.106 Safari/537.36"
+                }
+            }
+        }
+    },
+    {
+        "test": {
+            "name": "/gamehq/guest/api/v1/rank/1",
+            "request": {
+                "url": "http://localhost:5000/gamehq/guest/api/v1/rank/1",
+                "method": "GET"
+            },
+            "validate": [
+                {
+                    "eq": [
+                        "status_code",
+                        200
+                    ]
+                },
+                {
+                    "eq": [
+                        "headers.Content-Type",
+                        "application/json"
+                    ]
+                },
+                {
+                    "eq": [
+                        "content.err_code",
+                        0
+                    ]
+                },
+                {
+                    "eq": [
+                        "content.err_msg",
+                        ""
+                    ]
+                }
+            ]
+        }
+    }
+]

@@ -4,28 +4,41 @@ import requests
 import json
 import uuid
 import time
-import sys,getopt
+import sys,getopt,random
+import threading
+import linecache
+from multiprocessing import Pool
 
 env = ''
 country = ''
+path = ''
 chatroom = ''
 number = ''
 url = ''
+roomid=''
+line_num=0
+
 
 headers = {
     "Content-Type": "application/json; charset=UTF-8",
-    "Cookie": "SPC_EC=HPQL8fezX4YA+ahvzDNWZWSbXAyTjcOBRdQVi+mfevyumuzlzyVnuJZEbUqsnkYZTU3FqKnUsHsK4aRc81b5THWkGn4xv862sKnjr6yCPt4aRlgxUppT4ELrdbSQWR3/BP4Nlw9TKp4ssjBpfjeIyskter78vZ4I/vGQuh/w/Ho=",
+    "Cookie": "SPC_EC=aMnP5IDq14bIVDKogVv+KNzH1SL5lP6NoCLIhY/hxDNiEtiCmZzO7Ibtf0/bSTwsi8hjMSIwebtbJoieN3uio/+a0w9mYFdpZ6KUp+XMgb2TEIO4dJRxccqi3+SvAb+xRWuFnWH8mcOmKMvTmxIvESpjppCyvi3tXraaTt45dww=",
     }
-#"env:country:chatroom:number:",
+
+lock = threading.RLock()
+
 def main(argv):
-    global env, country, chatroom, number, url
+    global env, country, path, roomid, number, url, url_room
     try:
         print("----begin----")
-        opts, args = getopt.getopt(argv, "e:c:r:n:",["env=","country=","chatroom=","number="])
+        opts, args = getopt.getopt(argv, "e:c:p:r:n:",["env=","country=","path=","roomid=","number="])
         #print(opts)
     except getopt.GetoptError:
-        print("usage: send_chat_msg.py --env <test> --country <vn> --chatroom <SPIM-***> --number <100>")
+        print("usage: send_chat_msg.py --env <test> --country <vn> --path <Path> --roomid <SPIM-***> --number <100>")
         sys.exit(2)
+    #print(len(opts))
+    if len(opts) != 5:
+        print("usage: send_chat_msg.py --env <test> --country <vn> --path <Path> --roomid <SPIM-***> --number <100>")
+        sys.exit()
     for opt,arg in opts:
         if opt in ("-e","--env"):
             env = arg
@@ -33,56 +46,131 @@ def main(argv):
             country = arg
             if country in ("id","th"):
                 url = "https://chatroom-live."+env+".shopee."+"co."+country+"/api/v1/"
+                url_room = "https://live."+env+".shopee."+"co."+country+"/api/v1/"
             if country in ("sg","tw","ph","vn"):
                 url = "https://chatroom-live." + env + ".shopee." + country + "/api/v1/"
+                url_room = "https://live." + env + ".shopee." + country + "/api/v1/"
             if country == "my":
                 url = "https://chatroom-live." + env + ".shopee." + "com." + country + "/api/v1/"
+                url_room = "https://live." + env + ".shopee." + "com." + country + "/api/v1/"
             #print(url)
-        elif opt in ("-r","--chatroom"):
-            chatroom = arg
+        elif opt in ("-p","--path"):
+            path=arg
+        elif opt in ("-r","--roomid"):
+            roomid = arg
         elif opt in ("-n","--number"):
             number = arg
         else:
-            print("usage: send_chat_msg.py --env <test> --country <vn> --chatroom <SPIM-***> --num <100>")
+            print("usage: send_chat_msg.py --env <test> --country <vn> --path <Path> --roomid <SPIM-***> --number <100>")
             sys.exit()
 
-#加入房间
-def join_room(chatroom):
-    url_join = url+"chatroom/"+chatroom+"/join"
-    #print(url_join)
+
+#加入房间，发送弹幕消息
+def send_msg(roomid,headers):
+    #lock.acquire()
+
+    #######eventid关联的roomid获取房间号######
+    url_roomid = url_room + "room/" + roomid + "/group"
+    print(url_roomid)
+    response = requests.get(url_roomid, verify=False).json()
+    if response['err_msg'] != "success":
+        print(headers['Cookie']+" 获取房间号失败!!!")
+        print(response)
+        #exit(2)
+
+    print(response['data']['chat_room'])
+    chatroom = response['data']['chat_room']
+
+    #######加入房间#########################
+    url_join = url + "chatroom/" + chatroom + "/join"
+    print(url_join)
     tmp_uuid = uuid.uuid1()
-    #print(tmp_uuid)
-    body = {"uuid":str(tmp_uuid),"avatar":"http://cf.shopee.tw/file/288cec57c8c78e2876c4c18a96ebbe6f"}
+    # print(tmp_uuid)
+    body = {"uuid": str(tmp_uuid), "avatar": "http://cf.shopee.tw/file/288cec57c8c78e2876c4c18a96ebbe6f"}
     response = requests.post(url_join, data=json.dumps(body), headers=headers, verify=False).json()
-    print(response)
+    #print(response)
+    if response['msg'] != "success":
+        print(headers['Cookie']+" 加入房间失败!!!")
+        print(response)
+        #exit(2)
+
 
     usersig = response['data']['usersig']
-    #print(usersig)
-    return tmp_uuid,usersig
+    # print(usersig)
 
-#读取文件中的内容，并发送弹幕消息
-def send_msg(uuid,usersig):
-    f = open("/Users/qi.zhou/message.txt", "r")
-    for num in range(0,int(number)):
-        line = f.readline()
-        while line:
-            line = line.strip()
-            content=time.strftime('%Y-%m-%d %H:%M:%S',time.localtime(time.time()))+" "+line
-            print(content)
-            url_sendMsg = url+"chatroom/"+chatroom+"/message"
-            body = {"uuid": str(uuid), "usersig": usersig, "content": content}
-            # print(body)
-            response = requests.post(url_sendMsg, data=json.dumps(body), headers=headers, verify=False).json()
-            # print(response)
-            line = f.readline()
-        f.seek(0)
+    #######开始读取消息发送消息###########
+    #path为绝对路径
+    message_path=path+"/message.txt"
+    f = open(message_path, "rb")
+    data = f.read().decode('utf-8')
     f.close()
 
+    n=data.count('\n')
+    #print("总行数",n)
+
+    for num in range(0,int(number)):
+        i = random.randint(1, n)
+        print("i======"+str(i))
+        line = linecache.getline('/Users/qi.zhou/message.txt', i).strip()
+        #print("line====================="+line)
+        content = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time())) + " " + line
+        url_sendMsg = url + "chatroom/" + chatroom + "/message"
+        print("url_sendMsg="+url_sendMsg)
+        body = {"uuid": str(tmp_uuid), "usersig": usersig, "content": content}
+        print(body)
+        response = requests.post(url_sendMsg, data=json.dumps(body), headers=headers, verify=False).json()
+        if response['msg'] != "success":
+            print(headers['Cookie']+" uuid="+str(tmp_uuid)+" 发送消息失败：")
+            print(response)
+        time.sleep(0.5)
+
+    #######退出用户####################
+    url_exit = url + "chatroom/" + chatroom + "/exit"
+    body = {"uuid": str(tmp_uuid), "usersig": usersig}
+    response = requests.post(url_exit, data=json.dumps(body), headers=headers, verify=False).json()
+    if response['msg'] != "success":
+        print(headers['Cookie']++" uuid="+str(tmp_uuid)+" 退出房间失败：")
+        print(response)
+
+    #lock.release()
 
 if __name__ == "__main__":
     main(sys.argv[1:])
-    a,b=join_room(chatroom)
-    send_msg(a,b)
+
+    pool = Pool(processes=2)
+
+    cookie_path = path + "/cookie.txt"
+    f = open(cookie_path, "r")
+
+    """
+    #多进程
+    line=f.readline()
+    while line:
+        headers= dict()
+        headers["Content-Type"]= "application/json; charset=UTF-8"
+        headers["Cookie"]=line.strip()
+        print(headers)
+        result = pool.apply_async(send_msg,(roomid,headers))
+        line=f.readline()
+    pool.close()
+    pool.join()
+    if result.successful():
+        print("successful")
+    """
+
+    #多线程
+    line = f.readline()
+    while line:
+        headers = dict()
+        headers["Content-Type"] = "application/json; charset=UTF-8"
+        headers["Cookie"] = line.strip()
+        #print(headers)
+        t = threading.Thread(target=send_msg, args=(roomid,headers))
+        t.start()
+        line = f.readline()
+    t.join()
+
+    print("----End----")
 
 
 

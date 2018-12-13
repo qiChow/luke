@@ -21,7 +21,7 @@ line_num=0
 
 headers = {
     "Content-Type": "application/json; charset=UTF-8",
-    "Cookie": "SPC_EC=aMnP5IDq14bIVDKogVv+KNzH1SL5lP6NoCLIhY/hxDNiEtiCmZzO7Ibtf0/bSTwsi8hjMSIwebtbJoieN3uio/+a0w9mYFdpZ6KUp+XMgb2TEIO4dJRxccqi3+SvAb+xRWuFnWH8mcOmKMvTmxIvESpjppCyvi3tXraaTt45dww=",
+    "Cookie": "",
     }
 
 lock = threading.RLock()
